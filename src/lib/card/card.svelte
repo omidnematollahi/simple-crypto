@@ -10,7 +10,7 @@
 	<div class="flex px-4 sm:px-6 justify-between mb-1">
 		<p class="mt-1 max-w-2xl font-bold text-lg text-slate-800">{coin.a}</p>
 	</div>
-	<div class="flex px-4 sm:px-6 justify-between">
+	<div class="flex px-4 sm:px-6 justify-between mb-3">
 		<p class="mt-1 max-w-2xl font-bold text-sm text-slate-800">volume: {coin.v}</p>
 	</div>
 	<slot/>

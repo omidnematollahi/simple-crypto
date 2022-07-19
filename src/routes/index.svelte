@@ -50,9 +50,7 @@
 	};
 
 	onMount(async () => {
-		connect('wss://stream.binance.com:9443/ws/btcusdt@ticker', 'BTC');
-		connect('wss://stream.binance.com:9443/ws/ethusdt@ticker', 'ETH');
-		connect('wss://stream.binance.com:9443/ws/adausdt@ticker', 'ADA');
+		connect('wss://stream.binance.com:9443/ws/btcusdt@ticker/ethusdt@ticker/adausdt@ticker', 'BTC');
 
 		state.subscribe((value) => {
 			coins = value.BTCItems.concat(value.ADAItems, value.ETHItems);
