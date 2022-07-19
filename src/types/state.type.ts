@@ -1,4 +1,4 @@
-type CryptoItem = {
+export type CryptoItem = {
 	e: string;
 	E: number;
 	s: string;
@@ -6,7 +6,7 @@ type CryptoItem = {
 	p: string;
 	q: string;
 };
-type State = {
+export type State = {
 	BTCItems: Array<CryptoItem>;
 	BTCHistory: Array<CryptoItem>;
 	ADAItems: Array<CryptoItem>;
