@@ -7,7 +7,7 @@
 		return item.a;
 	});
 
-	const padding = { top: 20, right: 15, bottom: 20, left: 25 };
+	const padding = { top: 20, right: 15, bottom: 20, left: 15 };
 
 	let width = 500;
 	let height = 100;
@@ -39,7 +39,8 @@
 	h2,
 	p {
 		width: 100%;
-		max-width: 500px;
+		max-width: 380px;
+		max-height: 100px;
 		margin-left: auto;
 		margin-right: auto;
 	}
@@ -48,26 +49,7 @@
 		position: relative;
 		width: 100%;
 		height: 100px;
-		overflow: visible;
-	}
-	.x-axis {
-		.tick {
-			font-size: 0.725em;
-			font-weight: 200;
-			&.tick-0 {
-				line {
-					stroke-dasharray: 0;
-				}
-			}
-			line {
-				stroke: #aaa;
-				stroke-dasharray: 2;
-			}
-			text {
-				fill: #666;
-				text-anchor: start;
-			}
-		}
+		overflow: hidden;
 	}
 
 	.path-line {

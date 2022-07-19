@@ -15,11 +15,6 @@ const config = {
 		// Override http methods in the Todo forms
 		methodOverride: {
 			allowed: ['PATCH', 'DELETE']
-		}
-	},
-	devServer: {
-		proxy: {
-			'/api': 'http://127.0.0.1:50545',
 		},
 	},
 };
