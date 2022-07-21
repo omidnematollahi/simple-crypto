@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { scaleLinear } from 'd3-scale';
-	import points from './points.js';
 	export let history: any;
-	let yTicks: any = [];
-	yTicks = history.map((item: any) => {
-		return item.a;
-	});
+	$: yTicks = history
+		.map((item: any) => {
+			return item.a;
+		})
+		.sort((a: number, b: number) => a - b);
 
 	const padding = { top: 20, right: 15, bottom: 20, left: 15 };
 
@@ -29,15 +29,23 @@
 <div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
 	<svg viewBox="0 0 380 100">
 		<!-- data -->
-		<path class="path-area" d={area} />
-		<path class="path-line" d={path} />
+		<path
+			class="path-area"
+			d={area}
+			fill={Number(history[history.length - 1].P) > 0
+				? 'rgba(0, 100, 33, 0.2)'
+				: 'rgb(255, 87, 51, 0.2)'}
+		/>
+		<path
+			class="path-line"
+			d={path}
+			stroke={Number(history[history.length - 1].P) > 0 ? 'rgb(0, 100, 30)' : 'rgb(255, 87, 51)'}
+		/>
 	</svg>
 </div>
 
 <style lang="scss">
-	.chart,
-	h2,
-	p {
+	.chart {
 		width: 100%;
 		max-width: 380px;
 		max-height: 100px;
@@ -54,13 +62,8 @@
 
 	.path-line {
 		fill: none;
-		stroke: rgb(0, 100, 30);
 		stroke-linejoin: round;
 		stroke-linecap: round;
 		stroke-width: 2;
-	}
-
-	.path-area {
-		fill: rgba(0, 100, 33, 0.2);
 	}
 </style>
