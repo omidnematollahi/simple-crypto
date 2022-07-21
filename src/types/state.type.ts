@@ -5,6 +5,7 @@ export type CryptoItem = {
 	t: number;
 	p: string;
 	q: string;
+	a: string;
 };
 export type State = {
 	BTCItems: Array<CryptoItem>;

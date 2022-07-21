@@ -1,51 +1,35 @@
 import { writable } from 'svelte/store';
 import axios from 'axios';
+import type { ExchangeCurrency } from '../types/rates.type';
 
-type ExchangeCurrency = {
-	USDALL: number;
-	USDEUR: number;
-	updateNeeded: boolean;
-};
-export const exchangeCurrencyState = writable<ExchangeCurrency>({
-	USDALL: 0,
-	USDEUR: 0,
-	updateNeeded: true
-});
+export const exchangeCurrencyState = writable<ExchangeCurrency>();
 
-export const exchange = (to: string, from: string, price: number) => {
+export const exchange = (to: keyof ExchangeCurrency, from: keyof ExchangeCurrency, price: number) => {
 	let multi = 0;
 	let USDBaseAmount: number;
 	if (from == 'USD') {
-		USDBaseAmount = price 
-	}
-	else USDBaseAmount = changeToUSD(from, price);
-	
+		USDBaseAmount = price;
+	} else USDBaseAmount = changeToUSD(from, price)!;
+
 	exchangeCurrencyState.subscribe((value) => {
-		if (from == 'EUR' && to == 'ALL') multi = value.USDALL * USDBaseAmount;
-		else if (from == 'ALL' && to == 'EUR') multi = value.USDEUR * USDBaseAmount;
-		else if (from == 'USD' && to == 'EUR') multi = value.USDEUR * USDBaseAmount;
-		else if (from == 'USD' && to == 'ALL') multi = value.USDALL * USDBaseAmount;
+		multi = Number(value[to]) * USDBaseAmount;
 	});
 	return multi;
 };
 
-export const changeToUSD = (from: string, amount: number) => {
+export const changeToUSD = (from: keyof ExchangeCurrency, amount: number) => {
 	let USDAmount;
 	exchangeCurrencyState.subscribe((value) => {
-		if (from === 'EUR') {
-			USDAmount = amount / value.USDEUR;
-		} else USDAmount = amount / value.USDALL;
+		USDAmount = Number(value[from]) * amount;
 	});
 	return USDAmount;
 };
 
-export const changeNoNeedToUpdate = () => {
-	exchangeCurrencyState.update((state) => ({ ...state, updateNeeded: false }));
+export const changeNeedToUpdate = (needed: boolean) => {
+	exchangeCurrencyState.update((state) => ({ ...state, updateNeeded: needed }));
 };
 
-export const getCurrnciesPair = async (to: string) => {
-	const convertHeader = new Headers();
-	convertHeader.append('apikey', '1XI1IlP676SAwLwCgJyu3Sts2lzj3V1M');
+export const getCurrnciesPair = async () => {
 	const response = await axios({
 		url: 'https://api.exchangerate-api.com/v4/latest/USD',
 		method: 'get'
@@ -54,7 +38,7 @@ export const getCurrnciesPair = async (to: string) => {
 	if (response.status == 200) {
 		exchangeCurrencyState.update((state: ExchangeCurrency) => ({
 			...state,
-			[to == 'ALL' ? 'USDALL' : 'USDEUR']: response.data.rates[to]
+			...response.data?.rates
 		}));
 	}
 };
