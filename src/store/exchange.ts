@@ -3,30 +3,34 @@ import axios from 'axios';
 import type { ExchangeCurrency } from '../types/rates.type';
 
 export const exchangeCurrencyState = writable<ExchangeCurrency>();
+export const currentCurrency = writable<string>('USD');
 
-export const exchange = (to: keyof ExchangeCurrency, from: keyof ExchangeCurrency, price: number) => {
+export const changeCurrentCurrency = (newCurrency: string) => {
+	currentCurrency.update((state) => newCurrency);
+};
+
+export const exchange = (
+	to: keyof ExchangeCurrency,
+	from: keyof ExchangeCurrency,
+	price: number
+) => {
 	let multi = 0;
 	let USDBaseAmount: number;
-	if (from == 'USD') {
-		USDBaseAmount = price;
-	} else USDBaseAmount = changeToUSD(from, price)!;
+	USDBaseAmount = from == 'USD' ? (USDBaseAmount = price) : changeToUSD(from, price)!;
 
 	exchangeCurrencyState.subscribe((value) => {
 		multi = Number(value[to]) * USDBaseAmount;
 	});
+
 	return multi;
 };
 
 export const changeToUSD = (from: keyof ExchangeCurrency, amount: number) => {
 	let USDAmount;
 	exchangeCurrencyState.subscribe((value) => {
-		USDAmount = Number(value[from]) * amount;
+		USDAmount = amount / Number(value[from]);
 	});
 	return USDAmount;
-};
-
-export const changeNeedToUpdate = (needed: boolean) => {
-	exchangeCurrencyState.update((state) => ({ ...state, updateNeeded: needed }));
 };
 
 export const getCurrnciesPair = async () => {
