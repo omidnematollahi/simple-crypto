@@ -8,15 +8,12 @@
 	import { print } from 'graphql';
 	import gql from 'graphql-tag';
 	import { state, connect } from '../store/coin';
-	import {
-		getCurrnciesPair,
-		exchange,
-		changeNeedToUpdate
-	} from '../store/exchange';
+	import { getCurrnciesPair, exchange, changeNeedToUpdate } from '../store/exchange';
 	import Select from '$lib/select/select.svelte';
 	import Card from '$lib/card/card.svelte';
 	import Chart from '$lib/chart/chart.svelte';
 	import type { CountryType } from '../types/country.type';
+	import { Circle2 } from 'svelte-loading-spinners';
 
 	let coins: any[] = [];
 	let BTCHistory: any[] = [];
@@ -106,6 +103,9 @@
 
 <section class="bg-white shadow-lg p-5 m-5 rounded-md main">
 	<Select {countries} on:countryChanged={countryChanged} />
+	{#if !coins.length}
+		<Circle2 size="80" unit="px" />
+	{/if}
 	<div class="flex justify-center items-center md:flex-row sm:flex-col">
 		{#each coins as coin}
 			<div class="grow m-2 sm:min-w-full md:min-w-fit" style="min-height: 280px;">
@@ -128,5 +128,9 @@
 <style lang="scss">
 	.main {
 		padding: 100px 150px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
 	}
 </style>
