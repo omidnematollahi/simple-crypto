@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { exchangeCurrencyState } from './exchange';
-import type { State } from '../types/state.type';
+import type { State, CryptoItem } from '../types/state.type';
 
 export const state = writable<State>({
 	BTCItems: [],
@@ -25,7 +25,7 @@ export const connect = (socketUrl: string, symbol: string) => {
 	});
 
 	ws.addEventListener('message', (message: any) => {
-		const data: Item = JSON.parse(message.data);
+		const data: CryptoItem = JSON.parse(message.data);
 
 		exchangeCurrencyState.subscribe((value) => {
 			if (value.updateNeeded) {
@@ -36,7 +36,7 @@ export const connect = (socketUrl: string, symbol: string) => {
 					ETHHistory: data.s === 'ETHUSDT' ? [data].concat(state.ETHHistory) : state.ETHHistory,
 					ETHItems: data.s === 'ETHUSDT' ? [data] : state.ETHItems,
 					ADAHistory: data.s === 'ADAUSDT' ? [data].concat(state.ADAHistory) : state.ADAHistory,
-					ADAItems: data.s === 'ADAUSDT' ? [data] : state.ADAItems,
+					ADAItems: data.s === 'ADAUSDT' ? [data] : state.ADAItems
 				}));
 			}
 		});

@@ -11,7 +11,7 @@
 	import {
 		getCurrnciesPair,
 		exchange,
-		changeNoNeedToUpdate
+		changeNeedToUpdate
 	} from '../store/exchange';
 	import Select from '$lib/select/select.svelte';
 	import Card from '$lib/card/card.svelte';
@@ -46,10 +46,11 @@
 		countrySelected = event.detail.country;
 
 		convert();
-		changeNoNeedToUpdate();
+		changeNeedToUpdate(false);
 	};
 
 	onMount(async () => {
+		changeNeedToUpdate(true);
 		connect('wss://stream.binance.com:9443/ws/btcusdt@ticker/ethusdt@ticker/adausdt@ticker', 'BTC');
 
 		state.subscribe((value) => {
@@ -60,8 +61,7 @@
 			ADAHistory = value.ADAHistory;
 		});
 
-		getCurrnciesPair('ALL');
-		getCurrnciesPair('EUR');
+		getCurrnciesPair();
 
 		const GET_COUNTRIES = gql`
 			{
