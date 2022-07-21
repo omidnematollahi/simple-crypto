@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { exchangeCurrencyState } from './exchange';
+import { currentCurrency, exchange } from './exchange';
 import type { State, CryptoItem } from '../types/state.type';
 
 export const state = writable<State>({
@@ -11,7 +11,7 @@ export const state = writable<State>({
 	ETHHistory: []
 });
 
-export const connect = (socketUrl: string, symbol: string) => {
+export const connect = (socketUrl: string) => {
 	const ws = new WebSocket(socketUrl);
 	if (!ws) {
 		state.update((s: State) => {
@@ -27,18 +27,17 @@ export const connect = (socketUrl: string, symbol: string) => {
 	ws.addEventListener('message', (message: any) => {
 		const data: CryptoItem = JSON.parse(message.data);
 
-		exchangeCurrencyState.subscribe((value) => {
-			if (value.updateNeeded) {
-				state.update((state) => ({
-					...state,
-					BTCHistory: data.s === 'BTCUSDT' ? [data].concat(state.BTCHistory) : state.BTCHistory,
-					BTCItems: data.s === 'BTCUSDT' ? [data] : state.BTCItems,
-					ETHHistory: data.s === 'ETHUSDT' ? [data].concat(state.ETHHistory) : state.ETHHistory,
-					ETHItems: data.s === 'ETHUSDT' ? [data] : state.ETHItems,
-					ADAHistory: data.s === 'ADAUSDT' ? [data].concat(state.ADAHistory) : state.ADAHistory,
-					ADAItems: data.s === 'ADAUSDT' ? [data] : state.ADAItems
-				}));
-			}
+		currentCurrency.subscribe((value) => {
+			data.a = exchange(value, 'USD', data.a);
+			state.update((state) => ({
+				...state,
+				BTCHistory: data.s === 'BTCUSDT' ? [data].concat(state.BTCHistory) : state.BTCHistory,
+				BTCItems: data.s === 'BTCUSDT' ? [data] : state.BTCItems,
+				ETHHistory: data.s === 'ETHUSDT' ? [data].concat(state.ETHHistory) : state.ETHHistory,
+				ETHItems: data.s === 'ETHUSDT' ? [data] : state.ETHItems,
+				ADAHistory: data.s === 'ADAUSDT' ? [data].concat(state.ADAHistory) : state.ADAHistory,
+				ADAItems: data.s === 'ADAUSDT' ? [data] : state.ADAItems
+			}));
 		});
 	});
 

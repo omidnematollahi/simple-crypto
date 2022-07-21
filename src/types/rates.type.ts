@@ -161,5 +161,4 @@ export type ExchangeCurrency = {
 	ZAR: number;
 	ZMW: number;
 	ZWL: number;
-	updateNeeded: boolean;
 };
