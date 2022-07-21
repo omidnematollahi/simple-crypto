@@ -8,7 +8,7 @@
 	import { print } from 'graphql';
 	import gql from 'graphql-tag';
 	import { state, connect } from '../store/coin';
-	import { getCurrnciesPair, exchange, changeNeedToUpdate } from '../store/exchange';
+	import { getCurrnciesPair, changeCurrentCurrency } from '../store/exchange';
 	import Select from '$lib/select/select.svelte';
 	import Card from '$lib/card/card.svelte';
 	import Chart from '$lib/chart/chart.svelte';
@@ -21,33 +21,14 @@
 	let ADAHistory: any[] = [];
 	let countrySelected: CountryType;
 	let countries: Array<CountryType>;
-	let currentCurrency: string = 'USD';
-
-	const convert = () => {
-		state.update((currentValue) => {
-			Object.keys(currentValue).forEach((coin) => {
-				if (coin == 'BTCItems' || coin == 'ETHItems' || coin == 'ADAItems') {
-					currentValue[coin][0].a = exchange(
-						countrySelected.currencies.edges[0].node.code,
-						currentCurrency,
-						currentValue[coin][0].a
-					);
-				}
-			});
-			return currentValue;
-		});
-		currentCurrency = countrySelected.currencies.edges[0].node.code;
-	};
 
 	const countryChanged = (event: any) => {
 		countrySelected = event.detail.country;
 
-		convert();
-		changeNeedToUpdate(false);
+		changeCurrentCurrency(countrySelected.currencies.edges[0].node.code);
 	};
 
 	onMount(async () => {
-		changeNeedToUpdate(true);
 		connect('wss://stream.binance.com:9443/ws/btcusdt@ticker/ethusdt@ticker/adausdt@ticker', 'BTC');
 
 		state.subscribe((value) => {
