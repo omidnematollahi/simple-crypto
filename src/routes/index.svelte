@@ -6,7 +6,7 @@
 	import axios from 'axios';
 	import { onMount } from 'svelte';
 	import { print } from 'graphql';
-	import gql from 'graphql-tag';
+	import { GET_COUNTRIES_QUERY } from '../constants/constants';
 	import { state, connect } from '../store/coin';
 	import { getCurrnciesPair, changeCurrentCurrency } from '../store/exchange';
 	import Select from '$lib/select/select.svelte';
@@ -20,7 +20,7 @@
 	let ETHHistory: any[] = [];
 	let ADAHistory: any[] = [];
 	let countrySelected: CountryType;
-	let countries: Array<CountryType>;
+	let countries: Array<CountryType> = [];
 
 	const countryChanged = (event: any) => {
 		countrySelected = event.detail.country;
@@ -41,37 +41,18 @@
 
 		getCurrnciesPair();
 
-		const GET_COUNTRIES = gql`
-			{
-				countries(region: "Europe", name_Istartswith: "A") {
-					edges {
-						node {
-							name
-							nativeName
-							currencies {
-								edges {
-									node {
-										name
-										code
-										symbol
-									}
-								}
-							}
-							flag
-						}
-					}
-				}
-			}
-		`;
 		axios({
 			url: 'https://graphql.country/graphql',
 			method: 'post',
 			data: {
-				query: print(GET_COUNTRIES)
+				query: print(GET_COUNTRIES_QUERY)
 			}
 		}).then((result) => {
-			countries = result.data.data.countries.edges.map((item: any) => {
-				return item.node;
+			const data = result.data.data;
+			Object.keys(data).forEach((filteredCountry) => {
+				data[filteredCountry].edges.forEach((item: any) => {
+					countries.push(item.node);
+				});
 			});
 		});
 	});
@@ -83,7 +64,7 @@
 </svelte:head>
 
 <section class="bg-white shadow-lg p-5 m-5 rounded-md main">
-	<Select {countries} on:countryChanged={countryChanged} />
+	<Select {countries} on:countryChanged={countryChanged} selected={countries[0]} />
 	{#if !coins.length}
 		<Circle2 size="80" unit="px" />
 	{/if}
