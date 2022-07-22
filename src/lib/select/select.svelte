@@ -8,11 +8,11 @@
 
 	const dispatch = createEventDispatcher();
 
-	let selected: CountryType = {
-		name: 'Albania',
-		flag: 'https://storage.googleapis.com/graphql-country.appspot.com/flags/alb.svg',
-		nativeName: 'Shqipëria',
-		currencies: { edges: [{ node: { code: 'ALL', name: 'Albanian lek', symbol: 'L' } }] }
+	export let selected: CountryType = {
+		name: 'United States of America',
+		flag: 'https://storage.googleapis.com/graphql-country.appspot.com/flags/usa.svg',
+		nativeName: 'United States',
+		currencies: { edges: [{ node: { code: 'USD', name: 'United States dollar', symbol: '$' } }] }
 	};
 
 	let show: boolean = false; // menu state
